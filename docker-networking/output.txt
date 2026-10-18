@@ -1,0 +1,65 @@
+PS C:\Users\Dell\Downloads\Docker networking> dir
+
+
+    Directory: C:\Users\Dell\Downloads\Docker networking
+
+
+Mode                 LastWriteTime         Length Name                               
+----                 -------------         ------ ----                               
+-a----        10/18/2026   6:02 PM             58 .dockerignore                      
+-a----        10/18/2026   6:07 PM            216 .env                               
+-a----        10/18/2026   6:02 PM             55 .gitignore                         
+-a----        10/18/2026   6:02 PM           5462 app.py                             
+-a----        10/18/2026   6:02 PM           1862 docker-compose.yml                 
+-a----        10/18/2026   6:02 PM            335 Dockerfile                         
+-a----        10/18/2026   6:02 PM           3727 README.md                          
+-a----        10/18/2026   6:02 PM             69 requirements.txt                   
+
+
+PS C:\Users\Dell\Downloads\Docker networking> docker compose up --build -d
+[+] up 24/24
+ ✔ Image mysql:8.0      Pulled                                                  212.6s
+ ✔ Image redis:7-alpine Pulled                                                  130.9s
+[+] Building 131.1s (13/13) FINISHED                                                  
+ => [internal] load local bake definitions                                       0.0s
+ => => reading from stdin 557B                                                   0.0s
+ => [internal] load build definition from Dockerfile                             0.1s
+ => => transferring dockerfile: 374B                                             0.0s
+ => [internal] load metadata for docker.io/library/python:3.12-slim              5.2s
+ => [auth] library/python:pull token for registry-1.docker.io                    0.0s
+ => [internal] load .dockerignore                                                0.1s
+ => => transferring context: 98B                                                 0.0s
+ => [1/5] FROM docker.io/library/python:3.12-slim@sha256:a6e34c598f2467ed0e9a8  56.7s
+ => => resolve docker.io/library/python:3.12-slim@sha256:a6e34c598f2467ed0e9a8d  0.1s
+ => => sha256:bbc5a12237474ec0b23b5051260d56d6436a24d70d9cad961adeb 249B / 249B  0.5s
+ => => sha256:6912e23eb44595b44dc6d9882b34f305ad6f6e9667cec7 12.12MB / 12.12MB  19.9s
+ => => sha256:75b6a36c64a1cf3520fc4b4aae4739d5caa8a6a05c27835a9 1.29MB / 1.29MB  4.3s
+ => => sha256:ecc510c1e359bdc007b39802570bb7e4dec7d6ebccf357 29.84MB / 29.84MB  53.2s
+ => => extracting sha256:ecc510c1e359bdc007b39802570bb7e4dec7d6ebccf357c3201a74  1.8s
+ => => extracting sha256:75b6a36c64a1cf3520fc4b4aae4739d5caa8a6a05c27835a920a61  0.3s
+ => => extracting sha256:6912e23eb44595b44dc6d9882b34f305ad6f6e9667cec70b13e5db  1.0s
+ => => extracting sha256:bbc5a12237474ec0b23b5051260d56d6436a24d70d9cad961adebe  0.0s
+ => [internal] load build context                                                0.1s
+ => => transferring context: 5.61kB                                              0.0s
+ => [2/5] WORKDIR /app                                                           0.3s
+ => [3/5] COPY requirements.txt ./                                               0.1s
+ => [4/5] RUN pip install --no-cache-dir -r requirements.txt     && useradd --  60.5s
+ => [5/5] COPY --chown=appuser:appuser app.py ./app.py                           0.4s
+ => exporting to image                                                           7.1s
+ => => exporting layers                                                          3.9s
+ => => exporting manifest sha256:0c234d5f502d6f894a81dd854f7f844767ad4fb4a2c409  0.0s
+ => => exporting config sha256:b49aff9db0842082ca6558bacc8a17bfe75dd46139c34b2b  0.0s
+ => => exporting attestation manifest sha256:c456d0d0329ac644a5778c3e9c8827acf7  0.0s
+ => => exporting manifest list sha256:29fb44e20faf10d42e008b3a700072a5744e72d13  0.0s
+ => => naming to docker.io/library/dockernetworking-flask:latest                 0.0s
+ => => unpacking to docker.io/library/dockernetworking-flask:latest              3.1s
+ => resolving provenance for metadata file                                       0.0s
+[+] up 30/30
+ ✔ Image mysql:8.0                    Pulled                                    212.6s
+ ✔ Image redis:7-alpine               Pulled                                    130.9s
+ ✔ Image dockernetworking-flask       Built                                     131.3s
+ ✔ Network docker-networking          Created                                     0.1s
+ ✔ Volume dockernetworking_mysql_data Created                                     0.0s
+ ✔ Container dockernetworking-redis-1 Healthy                                     6.6s
+ ✔ Container dockernetworking-mysql-1 Healthy                                    22.1s
+ ✔ Container dockernetworking-flask-1 Started                                    21.7s
