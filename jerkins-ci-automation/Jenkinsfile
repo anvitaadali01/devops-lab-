@@ -1,0 +1,42 @@
+pipeline {
+    agent any
+
+    options {
+        timestamps()
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                deleteDir()
+                checkout scm
+            }
+        }
+
+        stage('Install dependencies') {
+            steps {
+                sh 'python3 -m venv .venv'
+                sh '.venv/bin/python -m pip install --upgrade pip'
+                sh '.venv/bin/python -m pip install -r requirements.txt'
+            }
+        }
+
+        stage('Run automated tests') {
+            steps {
+                sh '.venv/bin/python -m pytest -q --junitxml=test-results.xml'
+            }
+        }
+    }
+
+    post {
+        always {
+            junit allowEmptyResults: true, testResults: 'test-results.xml'
+        }
+        success {
+            echo 'CI passed: dependencies installed and all tests passed.'
+        }
+        failure {
+            echo 'CI failed. Review the stage logs and test results above.'
+        }
+    }
+}
