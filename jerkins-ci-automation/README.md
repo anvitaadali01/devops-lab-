@@ -1,6 +1,6 @@
 # Jenkins CI Automation
 
-This self-contained exercise demonstrates a basic Continuous Integration (CI) workflow with Jenkins. Jenkins runs in Docker; a small Python application is checked out from GitHub, its dependencies are installed, and automated tests run on each pipeline build.
+This self-contained exercise demonstrates a basic Continuous Integration (CI) workflow with Jenkins. Jenkins runs in Docker; a small Python application is checked out from GitHub, its dependencies are installed, and automated tests run on each pipeline build. 
 
 ## What the pipeline does
 
