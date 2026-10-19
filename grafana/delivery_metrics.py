@@ -36,7 +36,7 @@ def simulate_delivery():
     pending_deliveries.set(pending)
     on_the_way_deliveries.set(on_the_way)
     average_delivery_time.observe(avg_time)
-
+#
 
 if __name__ == "__main__":
     port = int(os.getenv("PORT", "8000"))
