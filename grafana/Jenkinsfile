@@ -1,0 +1,83 @@
+pipeline {
+    agent any
+
+    environment {
+        APP_NAME = 'delivery-metrics'
+        PROMETHEUS_NAME = 'prometheus'
+        GRAFANA_NAME = 'grafana'
+        NETWORK_NAME = 'delivery-monitoring'
+        APP_PORT = '8000'
+        PROMETHEUS_PORT = '9090'
+        GRAFANA_PORT = '3000'
+    }
+
+    stages {
+        stage('Prepare Docker Network') {
+            steps {
+                sh '''
+                    docker network inspect ${NETWORK_NAME} >/dev/null 2>&1 || docker network create ${NETWORK_NAME}
+                    docker rm -f ${APP_NAME} ${PROMETHEUS_NAME} ${GRAFANA_NAME} >/dev/null 2>&1 || true
+                '''
+            }
+        }
+
+        stage('Build Application Image') {
+            steps {
+                sh '''
+                    docker build -f delivery_monitoring/Dockerfile -t ${APP_NAME} delivery_monitoring
+                '''
+            }
+        }
+
+        stage('Run Delivery Metrics App') {
+            steps {
+                sh '''
+                    docker run -d \
+                        --name ${APP_NAME} \
+                        --network ${NETWORK_NAME} \
+                        -p ${APP_PORT}:${APP_PORT} \
+                        -e PORT=${APP_PORT} \
+                        ${APP_NAME}
+                '''
+            }
+        }
+
+        stage('Run Prometheus') {
+            steps {
+                sh '''
+                    docker run -d \
+                        --name ${PROMETHEUS_NAME} \
+                        --network ${NETWORK_NAME} \
+                        -p ${PROMETHEUS_PORT}:${PROMETHEUS_PORT} \
+                        -v "$WORKSPACE/delivery_monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro" \
+                        -v "$WORKSPACE/delivery_monitoring/alert_rules.yml:/etc/prometheus/alert_rules.yml:ro" \
+                        prom/prometheus
+                '''
+            }
+        }
+
+        stage('Run Grafana') {
+            steps {
+                sh '''
+                    docker run -d \
+                        --name ${GRAFANA_NAME} \
+                        --network ${NETWORK_NAME} \
+                        -p ${GRAFANA_PORT}:${GRAFANA_PORT} \
+                        grafana/grafana
+                '''
+            }
+        }
+
+        stage('Validate Services') {
+            steps {
+                sh '''
+                    echo "Checking metrics endpoint..."
+                    curl -fsS http://localhost:${APP_PORT}/metrics | grep -E "total_deliveries|pending_deliveries|on_the_way_deliveries|average_delivery_time" || true
+
+                    echo "Checking Prometheus target status..."
+                    curl -fsS http://localhost:${PROMETHEUS_PORT}/-/ready || true
+                '''
+            }
+        }
+    }
+}
